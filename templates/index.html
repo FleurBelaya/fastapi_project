@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FastAPI Users</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>FastAPI Users</h1>
+        <form id="user-form">
+            <input type="text" id="name" placeholder="Name" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <button type="submit">Add User</button>
+        </form>
+        <ul id="user-list"></ul>
+    </div>
+
+    <script>
+        const form = document.getElementById("user-form");
+        const userList = document.getElementById("user-list");
+
+        async function fetchUsers() {
+            const res = await fetch("/users/");
+            const users = await res.json();
+            userList.innerHTML = "";
+            users.forEach(user => {
+                const li = document.createElement("li");
+                li.textContent = `${user.name} (${user.email})`;
+                userList.appendChild(li);
+            });
+        }
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const name = document.getElementById("name").value;
+            const email = document.getElementById("email").value;
+            await fetch(`/users/?name=${name}&email=${email}`, { method: "POST" });
+            fetchUsers();
+            form.reset();
+        });
+
+        fetchUsers();
+    </script>
+</body>
+</html>
+
